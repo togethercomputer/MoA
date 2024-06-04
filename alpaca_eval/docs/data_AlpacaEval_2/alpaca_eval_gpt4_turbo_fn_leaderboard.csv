@@ -1,0 +1,12 @@
+name,win_rate,avg_length,link,samples,filter
+GPT-4 Preview,50.0,2049,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/gpt4_turbo/model_outputs.json,minimal
+Yi 34B Chat,34.84472049689441,2123,https://huggingface.co/01-ai/Yi-34B-Chat,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/Yi-34B-Chat/model_outputs.json,minimal
+GPT-4,25.093167701863354,1365,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/gpt4/model_outputs.json,minimal
+Mixtral 8x7B v0.1,22.795031055900623,1465,https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/Mixtral-8x7B-Instruct-v0.1/model_outputs.json,minimal
+Gemini Pro,20.372670807453417,1315,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/gemini-pro/model_outputs.json,minimal
+Mistral 7B v0.2,19.627329192546583,1676,https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/Mistral-7B-Instruct-v0.2/model_outputs.json,minimal
+Cohere Command,19.25465838509317,1983,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/cohere/model_outputs.json,minimal
+Tulu 2+DPO 70B,17.950310559006212,1418,https://huggingface.co/allenai/tulu-2-dpo-70b,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/tulu-2-dpo-70b/model_outputs.json,minimal
+LLaMA2 Chat 70B,17.018633540372672,1790,https://ai.meta.com/llama/,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/llama-2-70b-chat-hf/model_outputs.json,minimal
+Claude 2.1,15.031055900621118,1096,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/claude-2.1/model_outputs.json,minimal
+ChatGPT,8.012422360248447,827,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/chatgpt/model_outputs.json,minimal

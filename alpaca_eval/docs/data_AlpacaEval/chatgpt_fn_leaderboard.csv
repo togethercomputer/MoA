@@ -1,0 +1,12 @@
+name,win_rate,avg_length,link,samples,filter
+GPT-4,73.7888198757764,1365,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/gpt4/model_outputs.json,minimal
+Claude,70.37267080745342,1082,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/claude/model_outputs.json,minimal
+WizardLM 13B,65.15527950310559,985,https://huggingface.co/WizardLM/WizardLM-13B-1.0,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/wizardlm-13b/model_outputs.json,minimal
+Vicuna 13B,64.09937888198758,1037,https://huggingface.co/lmsys/vicuna-13b-delta-v1.1,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/vicuna-13b/model_outputs.json,minimal
+Guanaco 65B,62.36024844720497,1249,https://huggingface.co/timdettmers/guanaco-65b,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/guanaco-65b/model_outputs.json,minimal
+LLaMA 33B OASST RLHF,62.0496894409938,1079,https://huggingface.co/OpenAssistant/oasst-rlhf-2-llama-30b-7k-steps-xor,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/oasst-rlhf-llama-33b/model_outputs.json,minimal
+Alpaca Farm PPO Human 7B,60.24844720496895,803,https://huggingface.co/tatsu-lab/alpaca-farm-ppo-human-wdiff,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/alpaca-farm-ppo-human/model_outputs.json,minimal
+Falcon 40B Instruct,56.52173913043478,662,https://huggingface.co/tiiuae/falcon-40b-instruct,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/falcon-40b-instruct/model_outputs.json,minimal
+Davinci003,50.0,307,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/text_davinci_003/model_outputs.json,minimal
+Alpaca 7B,45.21739130434783,396,https://huggingface.co/tatsu-lab/alpaca-7b-wdiff,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/alpaca-7b/model_outputs.json,minimal
+Davinci001,28.07453416149068,296,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/text_davinci_001/model_outputs.json,minimal

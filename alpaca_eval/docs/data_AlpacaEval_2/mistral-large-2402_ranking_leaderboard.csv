@@ -1,0 +1,7 @@
+name,length_controlled_winrate,win_rate,avg_length,link,samples,filter
+GPT-4 Preview (11/06),50.0,50.0,2049,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/gpt4_1106_preview/model_outputs.json,minimal
+Claude 3 Opus (02/29),47.450744462524334,32.94723294723295,1388,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/claude-3-opus-20240229/model_outputs.json,minimal
+Mistral Large (24/02),45.47989179343149,28.045515394912982,1362,https://mistral.ai/news/la-plateforme/,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/mistral-large-2402/model_outputs.json,minimal
+GPT-4 (03/14),40.88989260514661,25.32383419689119,1371,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/gpt4_0314/model_outputs.json,minimal
+GPT-4 (06/13),34.303198292783584,18.14044213263979,1140,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/gpt4_0613/model_outputs.json,verified
+GPT 3.5 Turbo (11/06),28.929334810369056,11.558441558441558,796,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/gpt-3.5-turbo-1106/model_outputs.json,minimal

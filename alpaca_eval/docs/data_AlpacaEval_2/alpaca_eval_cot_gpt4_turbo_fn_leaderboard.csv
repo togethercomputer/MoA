@@ -1,0 +1,14 @@
+name,win_rate,avg_length,link,samples,filter
+GPT-4 Preview,50.0,2049.0,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/gpt4_turbo/model_outputs.json,minimal
+Yi 34B Chat,35.3416149068323,2123.0,https://huggingface.co/01-ai/Yi-34B-Chat,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/Yi-34B-Chat/model_outputs.json,minimal
+GPT-4,20.0,1365.0,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/gpt4/model_outputs.json,minimal
+Mixtral 8x7B v0.1,19.937888198757765,1465.0,https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/Mixtral-8x7B-Instruct-v0.1/model_outputs.json,minimal
+Cohere Command,17.267080745341616,1983.0,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/cohere/model_outputs.json,minimal
+Gemini Pro,17.039800995024876,1315.0,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/gemini-pro/model_outputs.json,minimal
+Tulu 2+DPO 70B,16.956521739130434,1418.0,https://huggingface.co/allenai/tulu-2-dpo-70b,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/tulu-2-dpo-70b/model_outputs.json,minimal
+Mistral 7B v0.2,15.527950310559005,1676.0,https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/Mistral-7B-Instruct-v0.2/model_outputs.json,minimal
+LLaMA2 Chat 70B,15.15527950310559,1790.0,https://ai.meta.com/llama/,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/llama-2-70b-chat-hf/model_outputs.json,minimal
+Vicuna 33B v1.3,13.354037267080743,1479.0,https://huggingface.co/lmsys/vicuna-33b-v1.3,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/vicuna-33b-v1.3/model_outputs.json,minimal
+Claude 2.1,12.919254658385093,1096.0,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/claude-2.1/model_outputs.json,minimal
+ChatGPT,6.645962732919254,827.0,,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/chatgpt/model_outputs.json,minimal
+Alpaca 7B,2.422360248447205,396.0,https://huggingface.co/tatsu-lab/alpaca-7b-wdiff,https://github.com/tatsu-lab/alpaca_eval/blob/main/results/alpaca-7b/model_outputs.json,minimal

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>AlpacaEval Leaderboard</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VWV023WWP4"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-VWV023WWP4');
+    </script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="icon" href="https://raw.githubusercontent.com/tatsu-lab/alpaca_eval/main/docs/AlpacaFarm_small.png">
+    <link href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" rel="stylesheet"/>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 50px 20px;
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        #branding {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #branding h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.2em;
+            color: #777;
+        }
+
+        table {
+            max-width: 700px;
+            width: 100%;
+            table-layout: fixed;
+            margin: auto;
+            font-size: 1em;
+        }
+
+        table th,
+        table td {
+            padding: 6px;
+            word-wrap: break-word;
+            vertical-align: middle;
+        }
+
+        table th {
+            border-bottom: 2px solid #000;
+        }
+
+        th:first-child,
+        td:first-child {
+            width: 60%;
+            padding-left: 30px;
+            text-align: left;
+        }
+
+        th:not(:first-child),
+        td:not(:first-child) {
+            text-align: right;
+            padding-right: 10px;
+        }
+
+        th:last-child,
+        td:last-child {
+            width: 17%;
+            padding-right: 30px;
+        }
+
+        th {
+            text-align: right;
+            padding-bottom: 15px;
+        }
+
+        td {
+            padding-bottom: 10px;
+        }
+
+        #leaderboard tr th:nth-child(3) {
+            color: #999999;  /* or any other color that you want */
+        }
+        #leaderboard tr td:nth-child(3) {
+            color: #999999;  /* or any other color that you want */
+        }
+
+        table tr:nth-child(even) {
+            background-color: #E8E8E8;
+        }
+
+        table tr:nth-child(odd) {
+            background-color: #F8F8F8;
+        }
+
+        .switch-toggle {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .switch-toggle input + label {
+            padding: 2px;
+            padding-left: 7px;
+            padding-right: 7px;
+            cursor: pointer;
+            background-color: lightgrey;
+            border: 1px solid transparent;
+            font-size: 16px;
+        }
+
+        .switch-toggle input:checked + label {
+            border-color: green;
+            color: green;
+        }
+
+        .switch-toggle input:not(:checked) + label {
+            color: black;
+            box-shadow: none !important;
+            user-select: none;
+        }
+
+
+        .toggle-line {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 17px;
+        }
+
+        .toggle-line .switch-toggle {
+            margin: 0 10px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <div id="branding">
+
+        <h1>AlpacaEval
+            <a href="https://github.com/tatsu-lab/alpaca_eval/tree/main">
+                <img src="https://raw.githubusercontent.com/tatsu-lab/alpaca_eval/main/docs/AlpacaFarm_small.png"
+                     alt="Logo" style="height: 2em; vertical-align: middle;"></a>
+            Leaderboard
+        </h1>
+        <br>
+        <h2>An Automatic Evaluator for Instruction-following Language Models</h2>
+<!--        <small id="alpaca_eval_info" style="color: #777;">-->
+<!--            Baseline: GPT-4 Preview &nbsp; | &nbsp; Auto-annotator: GPT-4 Preview-->
+<!--        </small>-->
+<!--        <br>-->
+        <small id="caution" style="color: #8C1515;">
+            <b> Length-controlled</b> (LC) win rates alleviate length biases of GPT-4, but it may favor models finetuned on its outputs.
+        </small>
+        <br>
+        <a href="https://github.com/tatsu-lab/alpaca_eval">
+            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub logo" style="height: 1.5em;/* margin-bottom: 0; */">
+        </a>
+    </div>
+
+    <div class="toggle-line">
+
+        Version:
+        <div class="switch-toggle switch-evaluator" style="margin-right: 4em">
+            <input id="alpaca_eval" name="version" type="radio"/>
+            <label for="alpaca_eval" onclick="">AlpacaEval</label>
+            <input id="alpaca_eval_2" name="version" type="radio" checked="checked"/>
+            <label for="alpaca_eval_2" onclick="">AlpacaEval 2.0</label>
+        </div>
+
+        Filter:
+        <div class="switch-toggle switch-filter">
+            <input id="community" name="filter" type="radio" checked="checked"/>
+            <label for="community" onclick="">Community</label>
+            <input id="verified" name="filter" type="radio"/>
+            <label for="verified" onclick="">Verified</label>
+<!--            <input id="minimal" name="compactness" type="radio"/>-->
+<!--            <label for="minimal" onclick="">Minimal</label>-->
+        </div>
+
+    </div>
+
+    <div class="container" style="text-align: center; margin-bottom: 10px; margin-top: -10px;">
+        <small id="alpaca_eval_info" style="color: #777;">
+            Baseline: GPT-4 Preview (11/06) &nbsp; | &nbsp; Auto-annotator: GPT-4 Preview (11/06)
+        </small>
+    </div>
+
+    <table id="leaderboard">
+        <tr>
+            <th><br>Model Name</th>
+            <th>LC Win Rate</th>
+            <th>Win Rate</th>
+        </tr>
+    </table>
+
+
+    <div id="documentation">
+        <div style="text-align: center;">
+            <a href="https://github.com/tatsu-lab/alpaca_eval" style="display: inline-block;">
+                <i class="fab fa-fw fa-github" aria-hidden="true"></i> Github
+            </a>
+        </div>
+        <br>
+        <h2>About AlpacaEval</h2>
+        <p>
+            <a href="https://github.com/tatsu-lab/alpaca_eval" target="_blank">AlpacaEval</a>
+            an LLM-based automatic evaluation that is fast, cheap, and reliable.
+            It is based on the
+            <a href="https://crfm.stanford.edu/2023/05/22/alpaca-farm.html">AlpacaFarm</a>
+            evaluation set,
+            which tests the ability of models to follow general user instructions.
+            These responses are then compared to reference responses (Davinci003 for AlpacaEval, GPT-4 Preview for AlpacaEval 2.0) by
+            the provided GPT-4 based auto-annotators,
+            which results in the win rates presented above.
+            AlpacaEval displays a high agreement rate with ground truth human annotations,
+            and leaderboard rankings on AlpacaEval are very correlated with leaderboard rankings
+            based on human annotators.
+            Please see our
+            <a href="https://github.com/tatsu-lab/alpaca_eval#analysis" target="_blank">documentation</a>
+            for more details on our analysis.
+        </p>
+        <h2>Adding new models</h2>
+        <p>
+            We welcome new model contributions to the leaderboard from the community!
+            To do so, please follow the steps in the
+            <a href="https://github.com/tatsu-lab/alpaca_eval#contributing" target="_blank">contributions
+                section</a>.
+            Specifically, you'll need to run the model on the evaluation set,
+            auto-annotate the outputs, and submit a PR with the model config and leaderboard results.
+            We've also set up a
+            <a href="https://discord.gg/GJMxJSVZZM" target="_blank">Discord</a>
+            for community support and discussion.
+        </p>
+        <h2>Adding new evaluators or eval sets </h2>
+        <p>
+            We also welcome contributions for new evaluators or new eval sets!
+            For making new evaluators, we release our ground-truth
+            <a href="https://github.com/tatsu-lab/alpaca_eval#data-release" target="_blank">human annotations</a>
+            and <a href="https://github.com/tatsu-lab/alpaca_eval#analyzing-an-evaluator" target="_blank">comparison
+            metrics</a>.
+            We also release a
+            <a href="https://github.com/tatsu-lab/alpaca_eval#analyzing-an-eval-set" target="_blank">rough guide</a>
+            to follow for making new eval sets.
+            We specifically encourage contributions for harder instructions distributions and for safety testing of
+            LLMs.
+        </p>
+        <h2>AlpacaEval limitations</h2>
+        <p>
+            While AlpacaEval provides a useful comparison of model capabilities in following instructions,
+            it is not a comprehensive or gold-standard evaluation of model abilities.
+            For one, as detailed in the
+            <a href="https://arxiv.org/abs/2305.14387" target="_blank">AlpacaFarm paper</a>,
+            the auto annotator winrates are correlated with length.
+            Though human annotations also display this bias,
+            it is unclear if more verbose answers add utility in downstream tasks.
+            Additionally, the AlpacaFarm eval set, though diverse, consists mainly of simple instructions.
+            We encourage the community to contribute new, more complex eval sets, such as for tool use.
+            Finally, AlpacaEval does not evaluate the safety of any of the models.
+        </p>
+    </div>
+
+</div>
+
+<script>
+    const alpacaEvalRadio = document.getElementById('alpaca_eval');
+    const alpacaEval2Radio = document.getElementById('alpaca_eval_2');
+
+    const communityRadio = document.getElementById('community');
+    const verifiedRadio = document.getElementById('verified');
+    // const minimalRadio = document.getElementById('minimal');
+
+    const table = document.getElementById('leaderboard');
+
+    const urls = {
+        'alpaca_eval': 'https://raw.githubusercontent.com/tatsu-lab/alpaca_eval/main/docs/data_AlpacaEval/alpaca_eval_gpt4_leaderboard.csv',
+        'alpaca_eval_2': 'https://raw.githubusercontent.com/tatsu-lab/alpaca_eval/main/docs/data_AlpacaEval_2/weighted_alpaca_eval_gpt4_turbo_leaderboard.csv',
+        // 'claude': 'https://raw.githubusercontent.com/tatsu-lab/alpaca_eval/main/docs/claude_leaderboard.csv',
+    }
+
+    let currentUrl = urls['alpaca_eval_2'];
+
+    function updateTable(url) {
+        while (table.rows.length > 1) {
+            table.deleteRow(1);
+        }
+
+        Papa.parse(url, {
+            download: true,
+            header: true,
+            complete: function (results) {
+                console.log(results.data);
+                results.data.forEach(row => {
+                    if (row['name'] || row['win_rate'] || row['length_controlled_winrate']) { //|| row['avg_length']
+                        let filter = row['filter'];
+
+                        if ((communityRadio.checked && (filter === 'verified' || filter === 'minimal' || filter === 'community')) ||
+                            (verifiedRadio.checked && (filter === 'verified' || filter === 'minimal'))) {
+
+                            const tr = document.createElement('tr');
+                            const nameTd = document.createElement('td');
+                            const winRateTd = document.createElement('td');
+                            //const lengthTd = document.createElement('td');
+                            const lenWinRateTd = document.createElement('td');
+
+                            if (row['link'] && row['link'].trim() !== '') {
+                                const a = document.createElement('a');
+                                a.textContent = row['name'];
+                                a.href = row['link'];
+                                a.target = "_blank";
+                                nameTd.appendChild(a);
+                            } else {
+                                nameTd.textContent = row['name'];
+                            }
+
+                            if (row['samples'] && row['samples'].trim() !== '') {
+                                const samplesLink = document.createElement('a');
+                                samplesLink.textContent = " 📄"; // adding a space before emoji to separate from name
+                                samplesLink.href = row['samples'];
+                                samplesLink.target = "_blank";
+                                samplesLink.style.textDecoration = "none";
+                                nameTd.appendChild(samplesLink);
+                            }
+
+                            winRateTd.textContent = Number(row['win_rate']).toFixed(1) + '%';
+
+                            if (row['length_controlled_winrate'] === '') {
+                                lenWinRateTd.textContent = 'N/A';
+                            } else {
+                                lenWinRateTd.textContent = Number(row['length_controlled_winrate']).toFixed(1) + '%';
+                            }
+                            //lenWinRateTd.textContent = Number(row['length_controlled_winrate']).toFixed(1) + '%';
+                            //lengthTd.textContent = Math.round(Number(row['avg_length'])).toString() ;
+
+
+                            tr.appendChild(nameTd);
+                            tr.appendChild(lenWinRateTd);
+                            tr.appendChild(winRateTd);
+                            //tr.appendChild(lengthTd);
+
+                            table.appendChild(tr);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function updateInfoMessage(version) {
+        let infoText;
+        if (version === 'alpaca_eval_2') {
+            infoText = 'Baseline: GPT-4 Preview (11/06) &nbsp; | &nbsp; Auto-annotator: GPT-4 Preview (11/06)';
+        } else if (version === 'alpaca_eval') {
+            infoText = 'Baseline: Davinci003 &nbsp; | &nbsp; Auto-annotator: GPT-4';
+        }
+        document.getElementById('alpaca_eval_info').innerHTML = infoText;
+    }
+
+    updateTable(urls['alpaca_eval_2']);
+
+    alpacaEval2Radio.addEventListener('click', function () {
+        currentUrl = urls['alpaca_eval_2'];
+        updateTable(currentUrl);
+        updateInfoMessage('alpaca_eval_2');
+    });
+
+    alpacaEvalRadio.addEventListener('click', function () {
+        currentUrl = urls['alpaca_eval'];
+        updateTable(currentUrl);
+        updateInfoMessage('alpaca_eval');
+    });
+
+    communityRadio.addEventListener('click', function () {
+        updateTable(currentUrl);
+    });
+
+    verifiedRadio.addEventListener('click', function () {
+        updateTable(currentUrl);
+    });
+
+    // minimalRadio.addEventListener('click', function () {
+    //     updateTable(currentUrl);
+    // });
+
+    updateCautionMessage('alpaca_eval_2');
+</script>
+
+
+</body>
+
+</html>
