@@ -167,7 +167,6 @@ def generate_with_references(
     max_tokens=2048,
     temperature=0.7,
     generate_fn=generate_together,
-    streaming=False,
 ):
 
     if len(references) > 0:
