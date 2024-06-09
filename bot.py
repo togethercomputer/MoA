@@ -163,7 +163,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--aggregator",
-        default="Qwen/Qwen1.5-72B-Chat",
+        default="Qwen/Qwen2-72B-Instruct",
         type=str,
         help="the name of the aggregator model to use",
     )
@@ -172,6 +172,7 @@ if __name__ == "__main__":
         type=str,
         default=",".join(
             [
+                "Qwen/Qwen2-72B-Instruct",
                 "Qwen/Qwen1.5-72B-Chat",
                 "mistralai/Mixtral-8x22B-Instruct-v0.1",
                 "databricks/dbrx-instruct",
