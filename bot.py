@@ -145,7 +145,7 @@ def main(
             print(out, end="")
             all_output += out
         print()
-        
+
         if DEBUG:
             logger.info(
                 f"model: {model}, instruction: {data['instruction'][0]}, output: {all_output[:20]}"
@@ -172,8 +172,6 @@ if __name__ == "__main__":
         type=str,
         default=",".join(
             [
-                "microsoft/WizardLM-2-8x22B",
-                "Qwen/Qwen1.5-110B-Chat",
                 "Qwen/Qwen1.5-72B-Chat",
                 "mistralai/Mixtral-8x22B-Instruct-v0.1",
                 "databricks/dbrx-instruct",
