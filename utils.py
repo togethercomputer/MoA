@@ -174,17 +174,9 @@ def generate_with_references(
 
         messages = inject_references_to_messages(messages, references)
 
-    if streaming:
-        return generate_together_stream(
-            model=model,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-        )
-    else:
-        return generate_fn(
-            model=model,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-        )
+    return generate_fn(
+        model=model,
+        messages=messages,
+        temperature=temperature,
+        max_tokens=max_tokens,
+    )

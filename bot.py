@@ -6,8 +6,7 @@ from loguru import logger
 import os
 import argparse
 from utils import (
-    generate_together,
-    generate_openai,
+    generate_together_stream,
     generate_with_references,
     DEBUG,
 )
@@ -49,7 +48,7 @@ def process_fn(
         logger.info(
             f"model: {model}, instruction: {item['instruction']}, output: {output[:20]}"
         )
-
+    
     return {"output": output}
 
 
@@ -87,16 +86,20 @@ def main(
         "Welcome to MoA interactive demo! Please input instructions to generate responses..."
     )
     print(f"Reference models: {','.join(reference_models)}\nAggregate Model: {model}")
+    
     data = {
         "instruction": [[] for _ in range(len(reference_models))],
         "references": [""] * len(reference_models),
         "model": [m for m in reference_models],
     }
+
     while True:
+        
         try:
             instruction = input("\n>>> ")
         except EOFError:
             break
+        
         if instruction == "exit" or instruction == "quit":
             print("Goodbye!")
             break
@@ -110,6 +113,7 @@ def main(
                 "references": [""] * len(reference_models),
                 "model": [m for m in reference_models],
             }
+        
         eval_set = datasets.Dataset.from_dict(data)
         for i_round in range(rounds):
             eval_set = eval_set.map(
@@ -131,8 +135,9 @@ def main(
             max_tokens=max_tokens,
             messages=data["instruction"][0],
             references=references,
-            streaming=True,
+            generate_fn=generate_together_stream,
         )
+
         all_output = ""
         for chunk in output:
             # print(chunk)
@@ -140,6 +145,7 @@ def main(
             print(out, end="")
             all_output += out
         print()
+        
         if DEBUG:
             logger.info(
                 f"model: {model}, instruction: {data['instruction'][0]}, output: {all_output[:20]}"
@@ -152,11 +158,12 @@ def main(
 
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
         "--aggregator",
-        default="Qwen/Qwen1.5-110B-Chat",
+        default="Qwen/Qwen1.5-72B-Chat",
         type=str,
         help="the name of the aggregator model to use",
     )
@@ -168,7 +175,6 @@ if __name__ == "__main__":
                 "microsoft/WizardLM-2-8x22B",
                 "Qwen/Qwen1.5-110B-Chat",
                 "Qwen/Qwen1.5-72B-Chat",
-                "meta-llama/Llama-3-70b-chat-hf",
                 "mistralai/Mixtral-8x22B-Instruct-v0.1",
                 "databricks/dbrx-instruct",
             ]
