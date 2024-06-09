@@ -60,8 +60,14 @@ from utils import (
 
 
 def get_answer(
-    question: dict, model: str, reference_models: List[str], num_choices: int, 
-    max_tokens: int, answer_file: str, rounds: int, provider: str,
+    question: dict,
+    model: str,
+    reference_models: List[str],
+    num_choices: int,
+    max_tokens: int,
+    answer_file: str,
+    rounds: int,
+    provider: str,
 ):
     assert (
         args.force_temperature is not None and "required_temperature" in question.keys()
@@ -77,9 +83,9 @@ def get_answer(
 
     choices = []
 
-    if provider == 'together':
+    if provider == "together":
         generate_fn = generate_together
-    elif provider == 'openai':
+    elif provider == "openai":
         generate_fn = generate_openai
     else:
         assert False
@@ -93,23 +99,25 @@ def get_answer(
 
             qs = question["turns"][j]
 
-            messages.append({'role': 'user', 'content': qs})
+            messages.append({"role": "user", "content": qs})
 
             references = []
 
             if len(reference_models) > 0:
-                
+
                 prev_references = []
-        
+
                 for i_round in range(rounds):
 
                     if DEBUG:
-                        logger.info(f'Round {i_round+1}/{rounds} to collecting reference responses.')
+                        logger.info(
+                            f"Round {i_round+1}/{rounds} to collecting reference responses."
+                        )
 
                     references = []
-                    
+
                     for reference_model in reference_models:
-            
+
                         reference = generate_with_references(
                             model=reference_model,
                             messages=messages,
@@ -118,15 +126,15 @@ def get_answer(
                             max_tokens=max_tokens,
                             generate_fn=generate_fn,
                         )
-            
+
                         if reference is not None:
-                            
+
                             references.append(reference)
 
                     if i_round < rounds - 1:
 
                         prev_references = references
-                        
+
                         references = []
 
             output = generate_with_references(
@@ -138,9 +146,12 @@ def get_answer(
                 references=references,
             ).strip()
 
-            messages.append({
-                'role': 'assistant', 'content': output,
-            })
+            messages.append(
+                {
+                    "role": "assistant",
+                    "content": output,
+                }
+            )
 
             turns.append(output)
 
@@ -201,7 +212,6 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    
     question_file = f"FastChat/fastchat/llm_judge/data/{args.bench_name}/question.jsonl"
     questions = load_questions(question_file, args.question_begin, args.question_end)
 
@@ -214,7 +224,7 @@ if __name__ == "__main__":
     if args.reference_models is None:
         reference_models = []
     else:
-        reference_models = args.reference_models.split(',')
+        reference_models = args.reference_models.split(",")
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.parallel) as executor:
         futures = []
@@ -238,4 +248,3 @@ if __name__ == "__main__":
             future.result()
 
     reorg_answer_file(answer_file)
-

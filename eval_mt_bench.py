@@ -212,7 +212,9 @@ if __name__ == "__main__":
 
     question_file = f"FastChat/fastchat/llm_judge/data/{args.bench_name}/question.jsonl"
     answer_dir = f"outputs/mt_bench"
-    ref_answer_dir = f"FastChat/fastchat/llm_judge/data/{args.bench_name}/reference_answer"
+    ref_answer_dir = (
+        f"FastChat/fastchat/llm_judge/data/{args.bench_name}/reference_answer"
+    )
 
     # Load questions
     questions = load_questions(question_file, None, None)

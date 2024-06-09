@@ -1,4 +1,3 @@
-
 import json
 import datasets
 from fire import Fire
@@ -13,32 +12,35 @@ from utils import (
     DEBUG,
 )
 
+
 def process_fn(
-    item, 
-    model, 
-    reference_models = [],
+    item,
+    model,
+    reference_models=[],
     temperature=0.7,
     max_tokens=2048,
     rounds=1,
 ):
 
-    messages = [{'role': 'user', 'content': item['instruction']}]
-    
-    references = item.get('references', [])
+    messages = [{"role": "user", "content": item["instruction"]}]
+
+    references = item.get("references", [])
 
     if len(references) == 0 and len(reference_models) > 0:
 
         prev_references = []
-        
+
         for i_round in range(rounds):
 
             if DEBUG:
-                logger.info(f'Round {i_round+1}/{rounds} to collecting reference responses.')
+                logger.info(
+                    f"Round {i_round+1}/{rounds} to collecting reference responses."
+                )
 
             references = []
-            
+
             for reference_model in reference_models:
-    
+
                 reference = generate_with_references(
                     model=reference_model,
                     messages=messages,
@@ -46,17 +48,16 @@ def process_fn(
                     temperature=temperature,
                     max_tokens=max_tokens,
                 )
-    
+
                 if reference is not None:
-                    
+
                     references.append(reference)
 
             if i_round < rounds - 1:
 
                 prev_references = references
-                
+
                 references = []
-                
 
     output = generate_with_references(
         model=model,
@@ -64,9 +65,7 @@ def process_fn(
         references=references,
     )
 
-    return {
-        'output': output, 'generator': model + '-together'
-    }
+    return {"output": output, "generator": model + "-together"}
 
 
 def main(
@@ -83,15 +82,17 @@ def main(
     if reference_paths is None:
         reference_paths = []
     else:
-        reference_paths = reference_paths.split(',')
+        reference_paths = reference_paths.split(",")
 
     if reference_models is None:
         reference_models = []
     else:
-        reference_models = reference_models.split(',')
-    
-    eval_set = datasets.load_dataset("tatsu-lab/alpaca_eval", "alpaca_eval_gpt4_baseline", trust_remote_code=True)["eval"]
-    eval_set = eval_set.remove_columns(['output', 'generator'])
+        reference_models = reference_models.split(",")
+
+    eval_set = datasets.load_dataset(
+        "tatsu-lab/alpaca_eval", "alpaca_eval_gpt4_baseline", trust_remote_code=True
+    )["eval"]
+    eval_set = eval_set.remove_columns(["output", "generator"])
 
     if len(reference_paths):
 
@@ -101,31 +102,40 @@ def main(
         for reference_path in reference_paths:
             with open(reference_path) as f:
                 reference_responses = json.load(f)
-                logger.info(f"Reading reference outputs: {reference_path} ({len(reference_responses)})")
-                for i_reference_response, reference_response in enumerate(reference_responses):
+                logger.info(
+                    f"Reading reference outputs: {reference_path} ({len(reference_responses)})"
+                )
+                for i_reference_response, reference_response in enumerate(
+                    reference_responses
+                ):
                     if len(references) <= i_reference_response:
-                        references.append([reference_response['output']])
+                        references.append([reference_response["output"]])
                     else:
-                        references[i_reference_response].append(reference_response['output'])
+                        references[i_reference_response].append(
+                            reference_response["output"]
+                        )
 
         eval_set = eval_set.add_column(f"references", references)
 
     elif len(reference_models):
 
-        logger.info(f"`reference_models` provided: {reference_models}. Will generate reference responses on-the-fly.")
-    
+        logger.info(
+            f"`reference_models` provided: {reference_models}. Will generate reference responses on-the-fly."
+        )
+
     logger.info(f"Start.")
-    
+
     eval_set = eval_set.map(
         partial(
-            process_fn, 
-            model=model, 
+            process_fn,
+            model=model,
             reference_models=reference_models,
             temperature=temperature,
             max_tokens=max_tokens,
             rounds=rounds,
         ),
-        batched=False, num_proc=num_proc,
+        batched=False,
+        num_proc=num_proc,
     )
 
     logger.info(f"Saving outputs to {output_path}.")
@@ -134,12 +144,12 @@ def main(
         eval_set = eval_set.remove_columns(f"references")
     except Exception as e:
         pass
-    
-    with open(output_path, 'w') as f:
-        
+
+    with open(output_path, "w") as f:
+
         json.dump(list(eval_set), f, indent=2)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     Fire(main)
