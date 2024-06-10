@@ -90,8 +90,7 @@ export OPENAI_API_KEY=<OPENAI_API_KEY>
 To run AlpacaEval 2, execute the following scripts:
 
 ```
-bash run_generation.sh
-bash run_eval.sh
+bash run_eval_alpaca_eval.sh
 ```
 
 ### Run MT-Bench
