@@ -1,16 +1,22 @@
-# Mixture-of-Agents
+# Mixture-of-Agents Enhances Large Language Model Capabilities
 
-## Introduction
+[![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)](LICENSE)
+[![arXiv](https://img.shields.io/badge/ArXiv-2406.04692-b31b1b.svg)](https://arxiv.org/abs/2406.04692)
+[![Discord](https://img.shields.io/badge/Discord-Together%20AI-blue?logo=discord&logoColor=white)](https://discord.com/invite/9Rk6sSeWEG)
+[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/togethercompute.svg?style=social&label=Follow%20%40togethercompute)](https://twitter.com/togethercompute)
+
+## Overview
+
+<div align="center">
+  <img src="assets/moa.jpg" alt="moa" style="width: 100%; display: block; margin-left: auto; margin-right: auto;" />
+  <br>
+</div>
 
 Mixture of Agents (MoA) is a novel approach that leverages the collective strengths of multiple LLMs to enhance performance, achieving state-of-the-art results. By employing a layered architecture where each layer comprises several LLM agents, MoA significantly outperforms GPT-4 Omni’s 57.5% on AlpacaEval 2.0 with a score of 65.1%, using only open-source models!
 
-<div align="center">
-  <img src="assets/moa.jpg" alt="icon" style="width: 100%; display: block; margin-left: auto; margin-right: auto;" />
-</div>
-
 ## Interactive Demo
 
-The interactive demo showcases a simple multi-turn chatbot where the response is aggregated from various reference models.
+We first present an interactive demo. It showcases a simple multi-turn chatbot where the final response is aggregated from various reference models.
 
 ### Setup
 
@@ -56,14 +62,14 @@ You can configure the demo by specifying the following parameters:
 - `--num_proc`: Number of processes to run in parallel for faster execution.
 - `--multi_turn`: Boolean to toggle multi-turn interaction capability.
 
-## Evaluation Benchmarks
+## Evaluation
 
-We provide scripts to quickly recreate some of the results presented in our paper
+We provide scripts to quickly reproduce some of the results presented in our paper
 For convinence, we have included the code from [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval), 
 [MT-Bench](https://github.com/lm-sys/FastChat), and [FLASK](https://github.com/kaistAI/FLASK), with necessary modifications.
 We extend our gratitude to these projects for creating the benchmarks.
 
-### Preparation:
+### Preparation
 
 ```bash
 # install requirements
@@ -103,6 +109,22 @@ For a minimal example of FLASK evaluation, run:
 ```
 bash run_eval_flask.sh
 ```
+
+### Results
+
+<div align="center">
+  <img src="assets/alpaca_and_mtbench.png" alt="alpaca_mtbench" style="width: 100%; display: block; margin-left: auto; margin-right: auto;" />
+  <br>
+</div>
+
+We achieved top positions on both the AlpacaEval 2.0 leaderboard and MT-Bench. Notably, on AlpacaEval 2.0, using solely open-source models, we achieved a margin of 7.6% absolute improvement from 57.5% (GPT-4 Omni) to 65.1% (MoA).
+
+<div align="center">
+  <img src="assets/flask.png" alt="flask" style="width: 50%; display: block; margin-left: auto; margin-right: auto;" />
+  <br>
+</div>
+
+FLASK offers fine-grained evaluation of models across multiple dimensions. Our MoA method significantly outperforms the original Qwen1.5-110B-Chat on harmlessness, robustness, correctness, efficiency, factuality, commonsense, insightfulness, completeness. Additionally, MoA also outperforms GPT-4 Omni in terms of correctness, factuality, insightfulness, completeness, and metacognition.
 
 Please feel free to contact us if you have difficulties in reproducing the results.
 
