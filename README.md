@@ -1,9 +1,12 @@
-# Mixture of Agents
+# Mixture-of-Agents
 
-## Overview
+## Introduction
 
-Mixture of Agents (MoA) is a novel approach that leverages the collective strengths of multiple LLMs to enhance performance, achieving state-of-the-art results. 
-By employing a layered architecture where each layer comprises several LLM agents, MoA significantly outperforms GPT-4 Omni’s 57.5% on AlpacaEval 2.0 with a score of 65.1%, using only open-source models!
+Mixture of Agents (MoA) is a novel approach that leverages the collective strengths of multiple LLMs to enhance performance, achieving state-of-the-art results. By employing a layered architecture where each layer comprises several LLM agents, MoA significantly outperforms GPT-4 Omni’s 57.5% on AlpacaEval 2.0 with a score of 65.1%, using only open-source models!
+
+<div align="center">
+  <img src="assets/moa.jpg" alt="icon" style="width: 100%; display: block; margin-left: auto; margin-right: auto;" />
+</div>
 
 ## Interactive Demo
 
@@ -76,7 +79,7 @@ export TOGETHER_API_KEY=<TOGETHER_API_KEY>
 export OPENAI_API_KEY=<OPENAI_API_KEY>
 ```
 
-### AlpacaEval 2
+### Run AlpacaEval 2
 
 To run AlpacaEval 2, execute the following scripts:
 
@@ -85,7 +88,7 @@ bash run_generation.sh
 bash run_eval.sh
 ```
 
-### MT-Bench
+### Run MT-Bench
 
 For a minimal example of MT-Bench evaluation, run:
 
@@ -93,7 +96,7 @@ For a minimal example of MT-Bench evaluation, run:
 bash run_eval_mt_bench.sh
 ```
 
-### FLASK
+### Run FLASK
 
 For a minimal example of FLASK evaluation, run:
 
@@ -101,39 +104,25 @@ For a minimal example of FLASK evaluation, run:
 bash run_eval_flask.sh
 ```
 
+Please feel free to contact us if you have difficulties in reproducing the results.
+
+## Credits
+
+Notably, this work was made possible by the collaborative spirit and contributions of active organizations in the AI field. We appreciate the efforts of Meta AI, Mistral AI, Microsoft, Alibaba Cloud, and DataBricks for developing the Llama 3, Mixtral, WizardLM 2, Qwen 1.5, and DBRX models. Additionally, we extend our gratitude to Tatsu Labs, LMSYS, and KAIST AI for developing the AlpacaEval, MT-Bench, and FLASK evaluation benchmarks.
+
 ## License
 
-All code in this repository was developed by Together Computer except where otherwise noted. Copyright (c) 2023, Together Computer. All rights reserved. The code is licensed under the Apache 2.0 license.
-
-```
-Copyright 2023 Together Computer
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```
-
-This repository also contains code written by a number of other authors. Such contributions are marked and the relevant licensing is included where appropriate.
-
-For full terms, see the LICENSE file. If you have any questions, comments, or concerns about licensing please [contact us](https://www.together.ai/contact).
+This project is licensed under the Apache 2.0 License - see the LICENSE file for details.
 
 ## Citation
 
 If you find this work helpful, please consider citing:
 
-```
+```bibtex
 @article{wang2024mixture,
   title={Mixture-of-Agents Enhances Large Language Model Capabilities},
   author={Wang, Junlin and Wang, Jue and Athiwaratkun, Ben and Zhang, Ce and Zou, James},
-  journal={arXiv preprint arXiv:2406.xxxxx},
+  journal={arXiv preprint arXiv:2406.04692},
   year={2024}
 }
 ```
