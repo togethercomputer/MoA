@@ -12,12 +12,9 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.prompt import Prompt
 from datasets.utils.logging import disable_progress_bar
+from time import sleep
 
 disable_progress_bar()
-
-"""
-- Add in prompts to ask users the arguments upfront
-"""
 
 console = Console()
 
@@ -26,13 +23,11 @@ welcome_message = """
 
 Mixture of Agents (MoA) is a novel approach that leverages the collective strengths of multiple LLMs to enhance performance, achieving state-of-the-art results. By employing a layered architecture where each layer comprises several LLM agents, MoA significantly outperforms GPT-4 Omni’s 57.5% on AlpacaEval 2.0 with a score of 65.1%, using only open-source models!
 
-This demo uses the following LLMs as reference models:
+This demo uses the following LLMs as reference models, then passes the results to the aggregate model for the final response:
 - Qwen/Qwen2-72B-Instruct
 - Qwen/Qwen1.5-72B-Chat
 - mistralai/Mixtral-8x22B-Instruct-v0.1
 - databricks/dbrx-instruct
-
-The results are then used by our aggregate model, **Qwen/Qwen2-72B-Instruct**, to provide the best results.
 
 """
 
@@ -95,29 +90,23 @@ def main(
     rounds: int = 1,
     multi_turn=True,
 ):
-    # """
-    # Runs a continuous conversation between user and MoA.
+    """
+    Runs a continuous conversation between user and MoA.
 
-    # Args:
-    #     model (str): The primary model identifier used for generating the final response. This model aggregates
-    #                  the outputs from the reference models to produce the final response.
-    #     reference_models (List[str]): A list of model identifiers that are used as references in the initial
-    #                                   rounds of generation. These models provide diverse perspectives and are
-    #                                   aggregated by the primary model.
-    #     temperature (float): A parameter controlling the randomness of the response generation. Higher values
-    #                          result in more varied outputs. The default value is 0.7.
-    #     max_tokens (int): The maximum number of tokens that can be generated in the response. This limits the
-    #                       length of the output from each model per turn. Default is 2048.
-    #     rounds (int): The number of processing rounds to refine the responses. In each round, the input is processed
-    #                   through the reference models, and their outputs are aggregated. Default is 1.
-    #     num_proc (int): The number of processes to run in parallel, improving the efficiency of the response
-    #                     generation process. Typically set to the number of reference models. Default is 6.
-    #     multi_turn (bool): Enables multi-turn interaction, allowing the conversation to build context over multiple
-    #                        exchanges. When True, the system maintains context and builds upon previous interactions.
-    #                        Default is True. When False, the system generates responses independently for each input.
-    # """
+    Args:
+    - model (str): The primary model identifier used for generating the final response. This model aggregates the outputs from the reference models to produce the final response.
+    - reference_models (List[str]): A list of model identifiers that are used as references in the initial rounds of generation. These models provide diverse perspectives and are aggregated by the primary model.
+    - temperature (float): A parameter controlling the randomness of the response generation. Higher values result in more varied outputs. The default value is 0.7.
+    - max_tokens (int): The maximum number of tokens that can be generated in the response. This limits the length of the output from each model per turn. Default is 2048.
+    - rounds (int): The number of processing rounds to refine the responses. In each round, the input is processed through the reference models, and their outputs are aggregated. Default is 1.
+    - multi_turn (bool): Enables multi-turn interaction, allowing the conversation to build context over multiple exchanges. When True, the system maintains context and builds upon previous interactions. Default is True. When False, the system generates responses independently for each input.
+    """
     md = Markdown(welcome_message)
     console.print(md)
+    sleep(0.75)
+    console.print(
+        "\n[bold]To use this demo, answer the questions below to get started [cyan](press enter to use the defaults)[/cyan][/bold]:"
+    )
 
     data = {
         "instruction": [[] for _ in range(len(reference_models))],
@@ -127,10 +116,32 @@ def main(
 
     num_proc = len(reference_models)
 
+    model = Prompt.ask(
+        "\n1. What main model do you want to use?",
+        default="Qwen/Qwen2-72B-Instruct",
+    )
+    console.print(f"Selected {model}.", style="yellow italic")
+    temperature = Prompt.ask(
+        "2. What temperature do you want to use? [cyan bold](0.7) [/cyan bold]",
+        default=0.7,
+        show_default=True,
+    )
+    console.print(f"Selected {temperature}.", style="yellow italic")
+    max_tokens = Prompt.ask(
+        "3. What max tokens do you want to use? [cyan bold](512) [/cyan bold]",
+        default=512,
+        show_default=True,
+    )
+    console.print(f"Selected {max_tokens}.", style="yellow italic")
+
     while True:
 
         try:
-            instruction = Prompt.ask("\n[cyan bold]Prompt >>[/cyan bold] ")
+            instruction = Prompt.ask(
+                "\n[cyan bold]Prompt >>[/cyan bold] ",
+                default="Top things to do in NYC",
+                show_default=True,
+            )
         except EOFError:
             break
 
