@@ -17,11 +17,6 @@ from rich.console import Console
 from rich.table import Table
 from rich.markdown import Markdown
 from rich.prompt import Prompt
-from datasets.utils.logging import disable_progress_bar
-from rich.progress import track
-
-# Disable the progress bar
-disable_progress_bar()
 
 console = Console(color_system="standard")
 
@@ -67,6 +62,8 @@ def process_fn(
     Returns:
         dict: A dictionary containing the 'output' key with the generated response as its value.
     """
+    # task = progress.add_task(model, total=100)
+
     references = item.get("references", [])
     model = item["model"]
     messages = item["instruction"]
@@ -128,7 +125,8 @@ def main(
             }
 
         eval_set = datasets.Dataset.from_dict(data)
-        for value in track(range(num_proc), description="Processing..."):
+
+        for i_round in range(rounds):
             eval_set = eval_set.map(
                 partial(
                     process_fn,
