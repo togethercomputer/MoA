@@ -11,11 +11,12 @@ from rich import print
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.prompt import Prompt
+from datasets.utils.logging import disable_progress_bar
+
+disable_progress_bar()
 
 """
 - Add in prompts to ask users the arguments upfront
-- Fix the issue
-- Add colors and stuff?
 """
 
 console = Console()
@@ -81,7 +82,8 @@ def process_fn(
             f"model: {model}, instruction: {item['instruction']}, output: {output[:20]}"
         )
 
-    # console.print(f"\nQuerying [bold]{model}...[/bold]")
+    print(f"\nFinished querying [bold]{model}.[/bold]")
+
     return {"output": output}
 
 
@@ -148,20 +150,25 @@ def main(
             }
 
         eval_set = datasets.Dataset.from_dict(data)
-        for i_round in range(rounds):
-            eval_set = eval_set.map(
-                partial(
-                    process_fn,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                ),
-                batched=False,
-                num_proc=num_proc,
-            )
-            references = [item["output"] for item in eval_set]
-            data["references"] = references
-            eval_set = datasets.Dataset.from_dict(data)
 
+        with console.status("[bold green]Querying all the models...") as status:
+            for i_round in range(rounds):
+                eval_set = eval_set.map(
+                    partial(
+                        process_fn,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                    ),
+                    batched=False,
+                    num_proc=num_proc,
+                )
+                references = [item["output"] for item in eval_set]
+                data["references"] = references
+                eval_set = datasets.Dataset.from_dict(data)
+
+        console.print(
+            "[cyan bold]Aggregating results & querying the aggregate model...[/cyan bold]"
+        )
         output = generate_with_references(
             model=model,
             temperature=temperature,
@@ -173,6 +180,8 @@ def main(
 
         all_output = ""
         print("\n")
+        console.log(Markdown(f"## Final answer from {model}"))
+
         for chunk in output:
             out = chunk.choices[0].delta.content
             console.print(out, end="")
