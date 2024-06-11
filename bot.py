@@ -106,6 +106,7 @@ def main(
         if multi_turn:
             for i in range(len(reference_models)):
                 data["instruction"][i].append({"role": "user", "content": instruction})
+                data["references"] = [""] * len(reference_models)
         else:
             data = {
                 "instruction": [[{"role": "user", "content": instruction}]]
