@@ -48,7 +48,7 @@ def process_fn(
         logger.info(
             f"model: {model}, instruction: {item['instruction']}, output: {output[:20]}"
         )
-    
+
     return {"output": output}
 
 
@@ -86,7 +86,7 @@ def main(
         "Welcome to MoA interactive demo! Please input instructions to generate responses..."
     )
     print(f"Reference models: {','.join(reference_models)}\nAggregate Model: {model}")
-    
+
     data = {
         "instruction": [[] for _ in range(len(reference_models))],
         "references": [""] * len(reference_models),
@@ -94,12 +94,12 @@ def main(
     }
 
     while True:
-        
+
         try:
             instruction = input("\n>>> ")
         except EOFError:
             break
-        
+
         if instruction == "exit" or instruction == "quit":
             print("Goodbye!")
             break
@@ -114,48 +114,55 @@ def main(
                 "references": [""] * len(reference_models),
                 "model": [m for m in reference_models],
             }
-        
+
         eval_set = datasets.Dataset.from_dict(data)
-        for i_round in range(rounds):
-            eval_set = eval_set.map(
-                partial(
-                    process_fn,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                ),
-                batched=False,
-                num_proc=num_proc,
-            )
-            references = [item["output"] for item in eval_set]
-            data["references"] = references
-            eval_set = datasets.Dataset.from_dict(data)
+        # for i_round in range(rounds):
+        #     eval_set = eval_set.map(
+        #         partial(
+        #             process_fn,
+        #             temperature=temperature,
+        #             max_tokens=max_tokens,
+        #         ),
+        #         batched=False,
+        #         num_proc=num_proc,
+        #     )
+        #     references = [item["output"] for item in eval_set]
+        #     data["references"] = references
+        #     eval_set = datasets.Dataset.from_dict(data)
 
-        output = generate_with_references(
-            model=model,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            messages=data["instruction"][0],
-            references=references,
-            generate_fn=generate_together_stream,
-        )
+        total = 0
+        for value in track(range(100), description="Processing..."):
+            # Fake processing time
+            time.sleep(0.01)
+            total += 1
+        print(f"Processed {total} things.")
 
-        all_output = ""
-        for chunk in output:
-            # print(chunk)
-            out = chunk.choices[0].delta.content
-            print(out, end="")
-            all_output += out
-        print()
+        # output = generate_with_references(
+        #     model=model,
+        #     temperature=temperature,
+        #     max_tokens=max_tokens,
+        #     messages=data["instruction"][0],
+        #     references=references,
+        #     generate_fn=generate_together_stream,
+        # )
 
-        if DEBUG:
-            logger.info(
-                f"model: {model}, instruction: {data['instruction'][0]}, output: {all_output[:20]}"
-            )
-        if multi_turn:
-            for i in range(len(reference_models)):
-                data["instruction"][i].append(
-                    {"role": "assistant", "content": all_output}
-                )
+        # all_output = ""
+        # for chunk in output:
+        #     # print(chunk)
+        #     out = chunk.choices[0].delta.content
+        #     print(out, end="")
+        #     all_output += out
+        # print()
+
+        # if DEBUG:
+        #     logger.info(
+        #         f"model: {model}, instruction: {data['instruction'][0]}, output: {all_output[:20]}"
+        #     )
+        # if multi_turn:
+        #     for i in range(len(reference_models)):
+        #         data["instruction"][i].append(
+        #             {"role": "assistant", "content": all_output}
+        #         )
 
 
 if __name__ == "__main__":
