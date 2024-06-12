@@ -121,16 +121,20 @@ def main(
         default="Qwen/Qwen2-72B-Instruct",
     )
     console.print(f"Selected {model}.", style="yellow italic")
-    temperature = Prompt.ask(
-        "2. What temperature do you want to use? [cyan bold](0.7) [/cyan bold]",
-        default=0.7,
-        show_default=True,
+    temperature = int(
+        Prompt.ask(
+            "2. What temperature do you want to use? [cyan bold](0.7) [/cyan bold]",
+            default=0.7,
+            show_default=True,
+        )
     )
     console.print(f"Selected {temperature}.", style="yellow italic")
-    max_tokens = Prompt.ask(
-        "3. What max tokens do you want to use? [cyan bold](512) [/cyan bold]",
-        default=512,
-        show_default=True,
+    max_tokens = int(
+        Prompt.ask(
+            "3. What max tokens do you want to use? [cyan bold](512) [/cyan bold]",
+            default=512,
+            show_default=True,
+        )
     )
     console.print(f"Selected {max_tokens}.", style="yellow italic")
 
