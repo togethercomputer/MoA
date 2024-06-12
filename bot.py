@@ -1,15 +1,42 @@
-import json
 import datasets
 from functools import partial
-from typing import List
 from loguru import logger
-import os
-import argparse
 from utils import (
     generate_together_stream,
     generate_with_references,
     DEBUG,
 )
+import typer
+from rich import print
+from rich.console import Console
+from rich.markdown import Markdown
+from rich.prompt import Prompt
+from datasets.utils.logging import disable_progress_bar
+from time import sleep
+
+disable_progress_bar()
+
+console = Console()
+
+welcome_message = """
+# Welcome to the Together AI MoA (Mixture-of-Agents) interactive demo!
+
+Mixture of Agents (MoA) is a novel approach that leverages the collective strengths of multiple LLMs to enhance performance, achieving state-of-the-art results. By employing a layered architecture where each layer comprises several LLM agents, MoA significantly outperforms GPT-4 Omni’s 57.5% on AlpacaEval 2.0 with a score of 65.1%, using only open-source models!
+
+This demo uses the following LLMs as reference models, then passes the results to the aggregate model for the final response:
+- Qwen/Qwen2-72B-Instruct
+- Qwen/Qwen1.5-72B-Chat
+- mistralai/Mixtral-8x22B-Instruct-v0.1
+- databricks/dbrx-instruct
+
+"""
+
+default_reference_models = [
+    "Qwen/Qwen2-72B-Instruct",
+    "Qwen/Qwen1.5-72B-Chat",
+    "mistralai/Mixtral-8x22B-Instruct-v0.1",
+    "databricks/dbrx-instruct",
+]
 
 
 def process_fn(
@@ -33,6 +60,7 @@ def process_fn(
     Returns:
         dict: A dictionary containing the 'output' key with the generated response as its value.
     """
+
     references = item.get("references", [])
     model = item["model"]
     messages = item["instruction"]
@@ -48,58 +76,75 @@ def process_fn(
         logger.info(
             f"model: {model}, instruction: {item['instruction']}, output: {output[:20]}"
         )
-    
+
+    print(f"\nFinished querying [bold]{model}.[/bold]")
+
     return {"output": output}
 
 
 def main(
-    model: str,
-    reference_models: str = None,
+    model: str = "Qwen/Qwen2-72B-Instruct",
+    reference_models: list[str] = default_reference_models,
     temperature: float = 0.7,
-    max_tokens: int = 2048,
+    max_tokens: int = 512,
     rounds: int = 1,
-    num_proc: int = 6,
     multi_turn=True,
 ):
     """
     Runs a continuous conversation between user and MoA.
 
     Args:
-        model (str): The primary model identifier used for generating the final response. This model aggregates
-                     the outputs from the reference models to produce the final response.
-        reference_models (List[str]): A list of model identifiers that are used as references in the initial
-                                      rounds of generation. These models provide diverse perspectives and are
-                                      aggregated by the primary model.
-        temperature (float): A parameter controlling the randomness of the response generation. Higher values
-                             result in more varied outputs. The default value is 0.7.
-        max_tokens (int): The maximum number of tokens that can be generated in the response. This limits the
-                          length of the output from each model per turn. Default is 2048.
-        rounds (int): The number of processing rounds to refine the responses. In each round, the input is processed
-                      through the reference models, and their outputs are aggregated. Default is 1.
-        num_proc (int): The number of processes to run in parallel, improving the efficiency of the response
-                        generation process. Typically set to the number of reference models. Default is 6.
-        multi_turn (bool): Enables multi-turn interaction, allowing the conversation to build context over multiple
-                           exchanges. When True, the system maintains context and builds upon previous interactions.
-                           Default is True. When False, the system generates responses independently for each input.
+    - model (str): The primary model identifier used for generating the final response. This model aggregates the outputs from the reference models to produce the final response.
+    - reference_models (List[str]): A list of model identifiers that are used as references in the initial rounds of generation. These models provide diverse perspectives and are aggregated by the primary model.
+    - temperature (float): A parameter controlling the randomness of the response generation. Higher values result in more varied outputs. The default value is 0.7.
+    - max_tokens (int): The maximum number of tokens that can be generated in the response. This limits the length of the output from each model per turn. Default is 2048.
+    - rounds (int): The number of processing rounds to refine the responses. In each round, the input is processed through the reference models, and their outputs are aggregated. Default is 1.
+    - multi_turn (bool): Enables multi-turn interaction, allowing the conversation to build context over multiple exchanges. When True, the system maintains context and builds upon previous interactions. Default is True. When False, the system generates responses independently for each input.
     """
-    print(
-        "Welcome to MoA interactive demo! Please input instructions to generate responses..."
+    md = Markdown(welcome_message)
+    console.print(md)
+    sleep(0.75)
+    console.print(
+        "\n[bold]To use this demo, answer the questions below to get started [cyan](press enter to use the defaults)[/cyan][/bold]:"
     )
-    print(f"Reference models: {','.join(reference_models)}\nAggregate Model: {model}")
-    
+
     data = {
         "instruction": [[] for _ in range(len(reference_models))],
         "references": [""] * len(reference_models),
         "model": [m for m in reference_models],
     }
 
+    num_proc = len(reference_models)
+
+    model = Prompt.ask(
+        "\n1. What main model do you want to use?",
+        default="Qwen/Qwen2-72B-Instruct",
+    )
+    console.print(f"Selected {model}.", style="yellow italic")
+    temperature = Prompt.ask(
+        "2. What temperature do you want to use? [cyan bold](0.7) [/cyan bold]",
+        default=0.7,
+        show_default=True,
+    )
+    console.print(f"Selected {temperature}.", style="yellow italic")
+    max_tokens = Prompt.ask(
+        "3. What max tokens do you want to use? [cyan bold](512) [/cyan bold]",
+        default=512,
+        show_default=True,
+    )
+    console.print(f"Selected {max_tokens}.", style="yellow italic")
+
     while True:
-        
+
         try:
-            instruction = input("\n>>> ")
+            instruction = Prompt.ask(
+                "\n[cyan bold]Prompt >>[/cyan bold] ",
+                default="Top things to do in NYC",
+                show_default=True,
+            )
         except EOFError:
             break
-        
+
         if instruction == "exit" or instruction == "quit":
             print("Goodbye!")
             break
@@ -114,22 +159,27 @@ def main(
                 "references": [""] * len(reference_models),
                 "model": [m for m in reference_models],
             }
-        
-        eval_set = datasets.Dataset.from_dict(data)
-        for i_round in range(rounds):
-            eval_set = eval_set.map(
-                partial(
-                    process_fn,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                ),
-                batched=False,
-                num_proc=num_proc,
-            )
-            references = [item["output"] for item in eval_set]
-            data["references"] = references
-            eval_set = datasets.Dataset.from_dict(data)
 
+        eval_set = datasets.Dataset.from_dict(data)
+
+        with console.status("[bold green]Querying all the models...") as status:
+            for i_round in range(rounds):
+                eval_set = eval_set.map(
+                    partial(
+                        process_fn,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                    ),
+                    batched=False,
+                    num_proc=num_proc,
+                )
+                references = [item["output"] for item in eval_set]
+                data["references"] = references
+                eval_set = datasets.Dataset.from_dict(data)
+
+        console.print(
+            "[cyan bold]Aggregating results & querying the aggregate model...[/cyan bold]"
+        )
         output = generate_with_references(
             model=model,
             temperature=temperature,
@@ -140,10 +190,12 @@ def main(
         )
 
         all_output = ""
+        print("\n")
+        console.log(Markdown(f"## Final answer from {model}"))
+
         for chunk in output:
-            # print(chunk)
             out = chunk.choices[0].delta.content
-            print(out, end="")
+            console.print(out, end="")
             all_output += out
         print()
 
@@ -159,60 +211,4 @@ def main(
 
 
 if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "--aggregator",
-        default="Qwen/Qwen2-72B-Instruct",
-        type=str,
-        help="the name of the aggregator model to use",
-    )
-    parser.add_argument(
-        "--reference_models",
-        type=str,
-        default=",".join(
-            [
-                "Qwen/Qwen2-72B-Instruct",
-                "Qwen/Qwen1.5-72B-Chat",
-                "mistralai/Mixtral-8x22B-Instruct-v0.1",
-                "databricks/dbrx-instruct",
-            ]
-        ),
-        help="reference models to use, separated by commas",
-    )
-    parser.add_argument(
-        "--max-tokens",
-        default=512,
-        type=int,
-        help="the maximum number of tokens to generate",
-    )
-    parser.add_argument(
-        "--round", default=1, type=int, help="the number of rounds to aggregate"
-    )
-    parser.add_argument(
-        "--no-multi-turn",
-        default=True,
-        action="store_false",
-        help="indicates whether to remeber context from previous turns or not",
-    )
-    parser.add_argument(
-        "--temperature", default=0.7, type=float, help="temperature for the LM"
-    )
-    args = parser.parse_args()
-
-    reference_models = args.reference_models.split(",")
-    temperature = args.temperature
-    max_tokens = args.max_tokens
-    rounds = args.round
-    multi_turn = args.no_multi_turn
-
-    main(
-        model=args.aggregator,
-        reference_models=reference_models,
-        temperature=temperature,
-        max_tokens=max_tokens,
-        rounds=rounds,
-        num_proc=len(reference_models),
-        multi_turn=multi_turn,
-    )
+    typer.run(main)

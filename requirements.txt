@@ -2,3 +2,4 @@ openai
 fire
 loguru
 datasets
+typer
