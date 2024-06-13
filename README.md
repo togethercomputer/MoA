@@ -65,7 +65,7 @@ You can configure the demo by specifying the following parameters:
 ## Evaluation
 
 We provide scripts to quickly reproduce some of the results presented in our paper
-For convinence, we have included the code from [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval), 
+For convenience, we have included the code from [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval), 
 [MT-Bench](https://github.com/lm-sys/FastChat), and [FLASK](https://github.com/kaistAI/FLASK), with necessary modifications.
 We extend our gratitude to these projects for creating the benchmarks.
 
