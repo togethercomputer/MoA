@@ -6,16 +6,30 @@ import openai
 import copy
 
 from loguru import logger
+from dotenv import load_dotenv
 
+# Read from .env if it exists
+load_dotenv()
 
 DEBUG = int(os.environ.get("DEBUG", "0"))
+
+api_base = os.environ.get(
+    "API_BASE"
+)  # e.g. http://localhost:11434/v1, https://api.together.xyz/v1, https://api.openai.com/v1 etc...
+api_key = os.environ.get("API_KEY")  # API key for together, ollama, openai etc...
+second_api_key = os.environ.get("SECOND_API_KEY")  # for comparison endpoint
+second_api_base = os.environ.get("SECOND_API_BASE")  # for comparison endpoint
+max_tokens = os.environ.get("MAX_TOKENS", "2048")
+temperature = os.environ.get("TEMPERATURE", "0.7")
 
 
 def generate_together(
     model,
     messages,
-    max_tokens=2048,
-    temperature=0.7,
+    max_tokens=max_tokens,
+    temperature=temperature,
+    api_key=api_key,
+    api_base=api_base,
     streaming=False,
 ):
 
@@ -25,7 +39,7 @@ def generate_together(
 
         try:
 
-            endpoint = "https://api.together.xyz/v1/chat/completions"
+            endpoint = api_base + "/chat/completions"
 
             if DEBUG:
                 logger.debug(
@@ -41,7 +55,7 @@ def generate_together(
                     "messages": messages,
                 },
                 headers={
-                    "Authorization": f"Bearer {os.environ.get('TOGETHER_API_KEY')}",
+                    "Authorization": f"Bearer {api_key}",
                 },
             )
             if "error" in res.json():
@@ -77,14 +91,12 @@ def generate_together(
 def generate_together_stream(
     model,
     messages,
-    max_tokens=2048,
-    temperature=0.7,
+    max_tokens=max_tokens,
+    temperature=temperature,
 ):
-    endpoint = "https://api.together.xyz/v1"
-    client = openai.OpenAI(
-        api_key=os.environ.get("TOGETHER_API_KEY"), base_url=endpoint
-    )
-    endpoint = "https://api.together.xyz/v1/chat/completions"
+    endpoint = ""
+    client = openai.OpenAI(api_key=api_key, base_url=endpoint)
+    endpoint = api_base + "/chat/completions"
     response = client.chat.completions.create(
         model=model,
         messages=messages,
@@ -99,12 +111,12 @@ def generate_together_stream(
 def generate_openai(
     model,
     messages,
-    max_tokens=2048,
-    temperature=0.7,
+    max_tokens=max_tokens,
+    temperature=temperature,
 ):
 
     client = openai.OpenAI(
-        api_key=os.environ.get("OPENAI_API_KEY"),
+        api_key=second_api_key,
     )
 
     for sleep_time in [1, 2, 4, 8, 16, 32]:
@@ -164,8 +176,8 @@ def generate_with_references(
     model,
     messages,
     references=[],
-    max_tokens=2048,
-    temperature=0.7,
+    max_tokens=max_tokens,
+    temperature=temperature,
     generate_fn=generate_together,
 ):
 

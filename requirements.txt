@@ -3,3 +3,6 @@ fire
 loguru
 datasets
 typer
+rich
+
+python-dotenv

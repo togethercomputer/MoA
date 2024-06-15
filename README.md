@@ -12,7 +12,7 @@
   <br>
 </div>
 
-Mixture of Agents (MoA) is a novel approach that leverages the collective strengths of multiple LLMs to enhance performance, achieving state-of-the-art results. By employing a layered architecture where each layer comprises several LLM agents, MoA significantly outperforms GPT-4 Omni’s 57.5% on AlpacaEval 2.0 with a score of 65.1%, using only open-source models!
+Mixture of Agents (MoA) is a novel approach that leverages the collective strengths of multiple LLMs to enhance performance, achieving state-of-the-art results. By employing a layered architecture where each layer comprises several LLM agents, MoA significantly outperforms GPT-4 Omni's 57.5% on AlpacaEval 2.0 with a score of 65.1%, using only open-source models!
 
 ## Interactive Demo
 
@@ -20,17 +20,16 @@ We first present an interactive demo. It showcases a simple multi-turn chatbot w
 
 ### Setup
 
-1. Export Your API Key:
+1. Copy the .env.example file to .env and update the API keys (and base URLs if necessary):
 
-   Ensure you have your Together API key and export it as an environment variable:
-
-   ```bash
-   export TOGETHER_API_KEY={your_key}
+   ```shell
+   cp .env.example .env
+   vi .env
    ```
 
 2. Install Requirements:
-   
-   ```bash
+
+   ```shell
    pip install -r requirements.txt
    ```
 
@@ -38,7 +37,7 @@ We first present an interactive demo. It showcases a simple multi-turn chatbot w
 
 To run the interactive demo, execute the following script with Python:
 
-```bash
+```shell
 python bot.py
 ```
 
@@ -65,13 +64,13 @@ You can configure the demo by specifying the following parameters:
 ## Evaluation
 
 We provide scripts to quickly reproduce some of the results presented in our paper
-For convenience, we have included the code from [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval), 
+For convenience, we have included the code from [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval),
 [MT-Bench](https://github.com/lm-sys/FastChat), and [FLASK](https://github.com/kaistAI/FLASK), with necessary modifications.
 We extend our gratitude to these projects for creating the benchmarks.
 
 ### Preparation
 
-```bash
+```shell
 # install requirements
 pip install -r requirements.txt
 cd alpaca_eval
@@ -81,7 +80,7 @@ pip install -e ".[model_worker,llm_judge]"
 cd ..
 
 # setup api keys
-export TOGETHER_API_KEY=<TOGETHER_API_KEY>
+export API_KEY=<API_KEY>
 export OPENAI_API_KEY=<OPENAI_API_KEY>
 ```
 
@@ -89,7 +88,7 @@ export OPENAI_API_KEY=<OPENAI_API_KEY>
 
 To run AlpacaEval 2, execute the following scripts:
 
-```
+```shell
 bash run_eval_alpaca_eval.sh
 ```
 
@@ -97,7 +96,7 @@ bash run_eval_alpaca_eval.sh
 
 For a minimal example of MT-Bench evaluation, run:
 
-```
+```shell
 bash run_eval_mt_bench.sh
 ```
 
@@ -105,7 +104,7 @@ bash run_eval_mt_bench.sh
 
 For a minimal example of FLASK evaluation, run:
 
-```
+```shell
 bash run_eval_flask.sh
 ```
 
@@ -123,13 +122,13 @@ We achieved top positions on both the AlpacaEval 2.0 leaderboard and MT-Bench. N
   <br>
 </div>
 
-FLASK offers fine-grained evaluation of models across multiple dimensions. Our MoA method significantly outperforms the original Qwen1.5-110B-Chat on harmlessness, robustness, correctness, efficiency, factuality, commonsense, insightfulness, completeness. Additionally, MoA also outperforms GPT-4 Omni in terms of correctness, factuality, insightfulness, completeness, and metacognition.
+FLASK offers fine-grained evaluation of models across multiple dimensions. Our MoA method significantly outperforms the original Qwen1.5-110B-Chat on harmlessness, robustness, correctness, efficiency, factuality, common sense, insightfulness, completeness. Additionally, MoA also outperforms GPT-4 Omni in terms of correctness, factuality, insightfulness, completeness, and meta-cognition.
 
 Please feel free to contact us if you have difficulties in reproducing the results.
 
 ## Credits
 
-Notably, this work was made possible by the collaborative spirit and contributions of active organizations in the AI field. We appreciate the efforts of Meta AI, Mistral AI, Microsoft, Alibaba Cloud, and DataBricks for developing the Llama 3, Mixtral, WizardLM 2, Qwen 1.5, and DBRX models. Additionally, we extend our gratitude to Tatsu Labs, LMSYS, and KAIST AI for developing the AlpacaEval, MT-Bench, and FLASK evaluation benchmarks.
+Notably, this work was made possible by the collaborative spirit and contributions of active organizations in the AI field. We appreciate the efforts of Meta AI, Mistral AI, Microsoft, Alibaba Cloud, and DataBricks for developing the Llama 3, Mixtral, WizardLM 2, Qwen 1.5, and DBRX models. Additionally, we extend our gratitude to Tatsu Labs, LMSYS, and KAIST AI for developing the AlpacaEval, MT-Bench, and FLASK evaluation benchmarks.
 
 ## License
 
