@@ -105,6 +105,7 @@ def generate_openai(
 
     client = openai.OpenAI(
         api_key=os.environ.get("OPENAI_API_KEY"),
+        base_url=os.environ.get("OPENAI_API_BASE")  # lm studio - http://localhost:1234/v1
     )
 
     for sleep_time in [1, 2, 4, 8, 16, 32]:
@@ -166,7 +167,7 @@ def generate_with_references(
     references=[],
     max_tokens=2048,
     temperature=0.7,
-    generate_fn=generate_together,
+    generate_fn=generate_openai,
 ):
 
     if len(references) > 0:

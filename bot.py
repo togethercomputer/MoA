@@ -2,7 +2,7 @@ import datasets
 from functools import partial
 from loguru import logger
 from utils import (
-    generate_together_stream,
+    generate_openai,
     generate_with_references,
     DEBUG,
 )
@@ -24,18 +24,14 @@ welcome_message = """
 Mixture of Agents (MoA) is a novel approach that leverages the collective strengths of multiple LLMs to enhance performance, achieving state-of-the-art results. By employing a layered architecture where each layer comprises several LLM agents, MoA significantly outperforms GPT-4 Omni’s 57.5% on AlpacaEval 2.0 with a score of 65.1%, using only open-source models!
 
 This demo uses the following LLMs as reference models, then passes the results to the aggregate model for the final response:
-- Qwen/Qwen2-72B-Instruct
-- Qwen/Qwen1.5-72B-Chat
-- mistralai/Mixtral-8x22B-Instruct-v0.1
-- databricks/dbrx-instruct
+- llmstudio-ai/gemma-2b-it-GGUF/gemma-2b-it-q8_0.gguf
+- microsoft/Phi-3-mini-4k-instruct-gguf/Phi-3-mini-4k-instruct-q4.gguf
 
 """
 
 default_reference_models = [
-    "Qwen/Qwen2-72B-Instruct",
-    "Qwen/Qwen1.5-72B-Chat",
-    "mistralai/Mixtral-8x22B-Instruct-v0.1",
-    "databricks/dbrx-instruct",
+    "lmstudio-ai/gemma-2b-it-GGUF/gemma-2b-it-q8_0.gguf",
+    "microsoft/Phi-3-mini-4k-instruct-gguf/Phi-3-mini-4k-instruct-q4.gguf",
 ]
 
 
@@ -83,7 +79,7 @@ def process_fn(
 
 
 def main(
-    model: str = "Qwen/Qwen2-72B-Instruct",
+    model: str = "lmstudio-ai/gemma-2b-it-GGUF/gemma-2b-it-q8_0.gguf",
     reference_models: list[str] = default_reference_models,
     temperature: float = 0.7,
     max_tokens: int = 512,
@@ -118,7 +114,7 @@ def main(
 
     model = Prompt.ask(
         "\n1. What main model do you want to use?",
-        default="Qwen/Qwen2-72B-Instruct",
+        default="lmstudio-ai/gemma-2b-it-GGUF/gemma-2b-it-q8_0.gguf",
     )
     console.print(f"Selected {model}.", style="yellow italic")
     temperature = int(
@@ -190,27 +186,23 @@ def main(
             max_tokens=max_tokens,
             messages=data["instruction"][0],
             references=references,
-            generate_fn=generate_together_stream,
+            generate_fn=generate_openai,
         )
 
-        all_output = ""
         print("\n")
         console.log(Markdown(f"## Final answer from {model}"))
+        print(output)
 
-        for chunk in output:
-            out = chunk.choices[0].delta.content
-            console.print(out, end="")
-            all_output += out
         print()
 
         if DEBUG:
             logger.info(
-                f"model: {model}, instruction: {data['instruction'][0]}, output: {all_output[:20]}"
+                f"model: {model}, instruction: {data['instruction'][0]}, output: {output[:20]}"
             )
         if multi_turn:
             for i in range(len(reference_models)):
                 data["instruction"][i].append(
-                    {"role": "assistant", "content": all_output}
+                    {"role": "assistant", "content": output}
                 )
 
 
