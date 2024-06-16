@@ -3,15 +3,15 @@ from utils import (
     generate_openai,
     inject_references_to_messages,
     generate_with_references,
+    generate_hf,
 )
-
 
 if __name__ == "__main__":
 
     #####
     messages = [{"role": "user", "content": "hello!"}]
-    output = generate_together(
-        "meta-llama/Llama-3-8b-chat-hf",
+    output = generate_hf(
+        "meta-llama/Meta-Llama-3-8B-Instruct",
         messages,
         temperature=0,
     )
