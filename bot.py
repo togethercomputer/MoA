@@ -121,7 +121,7 @@ def main(
         default="Qwen/Qwen2-72B-Instruct",
     )
     console.print(f"Selected {model}.", style="yellow italic")
-    temperature = int(
+    temperature = float(
         Prompt.ask(
             "2. What temperature do you want to use? [cyan bold](0.7) [/cyan bold]",
             default=0.7,
