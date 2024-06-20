@@ -8,13 +8,20 @@ from utils import (
 
 if __name__ == "__main__":
 
-    #####
+    ####
     messages = [{"role": "user", "content": "hello!"}]
-    output = generate_hf(
-        "meta-llama/Meta-Llama-3-8B-Instruct",
-        messages,
-        temperature=0,
-    )
+    try:
+        output = generate_together(
+            "meta-llama/Llama-3-8b-chat-hf",
+            messages,
+            temperature=0,
+        )
+    except:
+        output = generate_hf(
+            "meta-llama/Meta-Llama-3-8B-Instruct",
+            messages,
+            temperature=0,
+        )
     assert (
         output.strip()
         == "Hello! It's nice to meet you. Is there something I can help you with, or would you like to chat?"
@@ -39,11 +46,18 @@ if __name__ == "__main__":
     )
     assert len(messages) == 2
     assert messages[0]["role"] == "system"
-    output = generate_together(
-        "meta-llama/Llama-3-8b-chat-hf",
-        messages,
-        temperature=0,
-    )
+    try:
+        output = generate_together(
+            "meta-llama/Llama-3-8b-chat-hf",
+            messages,
+            temperature=0,
+        )
+    except:
+        output = generate_hf(
+            "meta-llama/Meta-Llama-3-8B-Instruct",
+            messages,
+            temperature=0,
+        )
     assert (
         output.strip()
         == "Hello! It seems like you're looking for assistance with something. I'm here to help! Could you please provide more context or clarify what's on your mind? I'll do my best to offer a helpful and accurate response."
