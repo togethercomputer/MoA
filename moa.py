@@ -20,7 +20,7 @@ Responses from models:"""
 
 
 async def run_llm(model):
-    """Run a single LLM call with a refernece model."""
+    """Run a single LLM call with a reference model."""
     response = await async_client.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": user_prompt}],
