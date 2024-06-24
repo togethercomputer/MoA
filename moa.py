@@ -25,7 +25,7 @@ async def run_llm(model):
         model=model,
         messages=[{"role": "user", "content": user_prompt}],
         temperature=0.7,
-        max_tokens=100,
+        max_tokens=512,
     )
     print(model)
     return response.choices[0].message.content
