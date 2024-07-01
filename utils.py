@@ -4,6 +4,11 @@ import time
 import requests
 import openai
 import copy
+try:
+    import transformers
+    import torch
+except:
+    pass
 
 from loguru import logger
 
@@ -133,6 +138,40 @@ def generate_openai(
 
     return output
 
+def generate_hf(
+    model,
+    messages,
+    max_tokens=2048,
+    temperature=0.7,
+):
+    
+    tokenizer = transformers.AutoTokenizer.from_pretrained(model)
+
+    bnb_config = transformers.BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.bfloat16
+    )
+    
+    pipeline = transformers.pipeline(
+        "text-generation",
+        model=model,
+        device_map="auto",
+        tokenizer=tokenizer,
+        model_kwargs={
+            "torch_dtype": torch.float16,
+            "quantization_config": bnb_config,
+            "low_cpu_mem_usage": True,
+        },)
+
+    output = pipeline(
+        messages,
+        max_new_tokens=max_tokens,
+        do_sample=(temperature > 0),
+        temperature=temperature,
+    )
+
+    return output[0]["generated_text"][-1]["content"]
 
 def inject_references_to_messages(
     messages,
