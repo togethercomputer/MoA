@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="#overview"><strong>Overview</strong></a> ·
-  <a href="#quickstart:-moa-in-50-loc"><strong>Quickstart</strong></a> ·
+  <a href="#quickstart-moa-in-50-loc"><strong>Quickstart</strong></a> ·
   <a href="#interactive-cli-demo"><strong>Demo</strong></a>
   ·
   <a href="#evaluation"><strong>Evaluation</strong></a>
