@@ -9,6 +9,10 @@ from loguru import logger
 
 
 DEBUG = int(os.environ.get("DEBUG", "0"))
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "https://api.together.xyz/v1")
+REFERENCE_API_KEY = os.environ.get("REFERENCE_API_KEY")
+REFERENCE_BASE_URL = os.environ.get("REFERENCE_BASE_URL", "https://api.openai.com/v1")
 
 
 def generate_together(
@@ -21,11 +25,11 @@ def generate_together(
 
     output = None
 
+    endpoint = f"{OPENAI_BASE_URL}/chat/completions"
+
     for sleep_time in [1, 2, 4, 8, 16, 32]:
 
         try:
-
-            endpoint = "https://api.together.xyz/v1/chat/completions"
 
             if DEBUG:
                 logger.debug(
@@ -41,7 +45,7 @@ def generate_together(
                     "messages": messages,
                 },
                 headers={
-                    "Authorization": f"Bearer {os.environ.get('TOGETHER_API_KEY')}",
+                    "Authorization": f"Bearer {OPENAI_API_KEY}",
                 },
             )
             if "error" in res.json():
@@ -80,11 +84,10 @@ def generate_together_stream(
     max_tokens=2048,
     temperature=0.7,
 ):
-    endpoint = "https://api.together.xyz/v1"
     client = openai.OpenAI(
-        api_key=os.environ.get("TOGETHER_API_KEY"), base_url=endpoint
+        api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL
     )
-    endpoint = "https://api.together.xyz/v1/chat/completions"
+    endpoint = f"{OPENAI_BASE_URL}/chat/completions"
     response = client.chat.completions.create(
         model=model,
         messages=messages,
@@ -104,7 +107,8 @@ def generate_openai(
 ):
 
     client = openai.OpenAI(
-        api_key=os.environ.get("OPENAI_API_KEY"),
+        api_key=REFERENCE_API_KEY,
+        base_url=REFERENCE_BASE_URL,
     )
 
     for sleep_time in [1, 2, 4, 8, 16, 32]:
