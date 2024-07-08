@@ -9,10 +9,19 @@ from loguru import logger
 
 
 DEBUG = int(os.environ.get("DEBUG", "0"))
+
+TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+EVAL_API_KEY = os.environ.get("EVAL_API_KEY")
+
+# If TOGETHER_API_KEY is set, use that one instead and use OPENAI for evaluations
+if TOGETHER_API_KEY:
+    OPENAI_API_KEY = TOGETHER_API_KEY
+    EVAL_API_KEY = os.environ.get("OPENAI_API_KEY")
+
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "https://api.together.xyz/v1")
-REFERENCE_API_KEY = os.environ.get("REFERENCE_API_KEY")
-REFERENCE_BASE_URL = os.environ.get("REFERENCE_BASE_URL", "https://api.openai.com/v1")
+EVAL_BASE_URL = os.environ.get("EVAL_BASE_URL", "https://api.openai.com/v1")
+
 
 
 def generate_together(
@@ -107,8 +116,8 @@ def generate_openai(
 ):
 
     client = openai.OpenAI(
-        api_key=REFERENCE_API_KEY,
-        base_url=REFERENCE_BASE_URL,
+        api_key=EVAL_API_KEY,
+        base_url=EVAL_BASE_URL,
     )
 
     for sleep_time in [1, 2, 4, 8, 16, 32]:
@@ -183,3 +192,4 @@ def generate_with_references(
         temperature=temperature,
         max_tokens=max_tokens,
     )
+
