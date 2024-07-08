@@ -131,6 +131,17 @@ Specify `--reference-models` multiple times to use multiple models as references
 python bot.py --reference-models "mistralai/Mixtral-8x22B-Instruct-v0.1" --reference-models "Qwen/Qwen2-72B-Instruct"
 ```
 
+## Other OpenAI Compatible API endpoints
+
+To use different OpenAI-compatible API endpoints, set the OPENAI_BASE_URL and OPENAI_API_KEY variable.
+
+```
+export TOGETHER_API_KEY=
+export OPENAI_BASE_URL="https://your-api-provider.com/v1"
+export OPENAI_API_KEY="your-api-key-here"
+```
+
+This way, any 3rd party API can be used, including local models.
 
 ## Evaluation
 
