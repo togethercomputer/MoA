@@ -11,12 +11,16 @@ disable_progress_bar()
 
 app = Flask(__name__)
 
+default_model = None
 default_reference_models = [
     "Qwen/Qwen2-72B-Instruct",
     "Qwen/Qwen1.5-72B-Chat",
     "mistralai/Mixtral-8x22B-Instruct-v0.1",
     "databricks/dbrx-instruct",
 ]
+_temperature = 0.7
+_max_tokens = 512
+_rounds = 1
 
 def process_fn(item, temperature=0.7, max_tokens=2048):
     references = item.get("references", [])
@@ -27,8 +31,8 @@ def process_fn(item, temperature=0.7, max_tokens=2048):
         model=model,
         messages=messages,
         references=references,
-        temperature=temperature,
-        max_tokens=max_tokens,
+        temperature=_temperature,
+        max_tokens=_max_tokens,
     )
     if DEBUG:
         logger.info(
@@ -41,9 +45,9 @@ def process_fn(item, temperature=0.7, max_tokens=2048):
 def chat_completions():
     data = request.json
     messages = data.get('messages', [])
-    temperature = data.get('temperature', 0.7)
-    max_tokens = data.get('max_tokens', 512)
     stream = data.get('stream', False)  # Check if the client requested streaming
+    temperature = data.get('temperature', _temperature)
+    max_tokens = data.get('max_tokens', _max_tokens)
     
     # Prepare data for processing
     data = {
@@ -165,11 +169,14 @@ def main(
     temperature: float = 0.7,
     max_tokens: int = 512,
     rounds: int = 1,
-    port: int = 5000,
+    port: int = 5001,
 ):
-    global default_model, default_reference_models
+    global default_model, default_reference_models, _temperature, _max_tokens, _rounds
     default_model = model
     default_reference_models = reference_models
+    _temperature = temperature
+    _max_tokens = max_tokens
+    _rounds = rounds
     app.run(port=port)
 
 if __name__ == "__main__":
