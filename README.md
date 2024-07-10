@@ -141,7 +141,24 @@ export OPENAI_BASE_URL="https://your-api-provider.com/v1"
 export OPENAI_API_KEY="your-api-key-here"
 ```
 
-This way, any 3rd party API can be used, including local models.
+This way, any 3rd party API can be used, such as OpenRouter, Groq, local models, etc.
+
+### Ollama
+
+For example, to run the bot using Ollama:
+
+1. Set up the environment:
+
+```
+export OPENAI_BASE_URL=http://localhost:11434/v1
+export OPENAI_API_KEY=ollama
+```
+
+2. Run the bot command:
+
+```
+python bot.py --model llama3 --reference-models llama3 --reference-models mistral
+```
 
 ## Evaluation
 
