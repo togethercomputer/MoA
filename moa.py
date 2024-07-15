@@ -1,6 +1,7 @@
 # Mixture-of-Agents in 50 lines of code
 import asyncio
 import os
+import together
 from together import AsyncTogether, Together
 
 client = Together(api_key=os.environ.get("TOGETHER_API_KEY"))
@@ -18,33 +19,32 @@ aggreagator_system_prompt = """You have been provided with a set of responses fr
 
 Responses from models:"""
 
-
 async def run_llm(model):
     """Run a single LLM call with a reference model."""
-    response = await async_client.chat.completions.create(
-        model=model,
-        messages=[{"role": "user", "content": user_prompt}],
-        temperature=0.7,
-        max_tokens=512,
-    )
+    for sleep_time in [1, 2, 4]:
+        try:
+            response = await async_client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": user_prompt}],
+                temperature=0.7,
+                max_tokens=512,
+            )
+            break
+        except together.error.RateLimitError as e:
+            print(e)
+            await asyncio.sleep(sleep_time)
     print(model)
     return response.choices[0].message.content
-
-
 async def main():
     results = await asyncio.gather(*[run_llm(model) for model in reference_models])
-
     finalStream = client.chat.completions.create(
         model=aggregator_model,
         messages=[
-            {"role": "system", "content": aggreagator_system_prompt},
-            {"role": "user", "content": ",".join(str(element) for element in results)},
+            {"role": "system", "content": aggreagator_system_prompt + "\n" + "\n".join([f"{i+1}. {str(element)}" for i, element in enumerate(results)])},
+            {"role": "user", "content": user_prompt},
         ],
         stream=True,
     )
-
     for chunk in finalStream:
         print(chunk.choices[0].delta.content or "", end="", flush=True)
-
-
 asyncio.run(main())
