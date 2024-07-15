@@ -21,7 +21,7 @@ Responses from models:"""
 
 async def run_llm(model):
     """Run a single LLM call with a reference model."""
-    for sleep_time in [1, 2, 4, 8, 16, 32]:
+    for sleep_time in [1, 2, 4]:
         try:
             response = await async_client.chat.completions.create(
                 model=model,
