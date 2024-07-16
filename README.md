@@ -5,14 +5,13 @@
 [![Discord](https://img.shields.io/badge/Discord-Together%20AI-blue?logo=discord&logoColor=white)](https://discord.com/invite/9Rk6sSeWEG)
 [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/togethercompute.svg?style=social&label=Follow%20%40togethercompute)](https://twitter.com/togethercompute)
 
-<a href="https://www.pdftochat.com/">
-  <img alt="PDFToChat – Chat with your PDFs in seconds." src="./assets/together-moa-explained.png">
-</a>
+<img alt="MoA architecture" src="./assets/moa.jpg">
 
 <p align="center">
   <a href="#overview"><strong>Overview</strong></a> ·
   <a href="#quickstart-moa-in-50-loc"><strong>Quickstart</strong></a> ·
-  <a href="#interactive-cli-demo"><strong>Demo</strong></a>
+  <a href="#multi-layer-moa-example"><strong>Advanced example</strong></a> ·
+  <a href="#interactive-cli-demo"><strong>Interactive CLI Demo</strong></a>
   ·
   <a href="#evaluation"><strong>Evaluation</strong></a>
   ·
@@ -27,83 +26,33 @@ Mixture of Agents (MoA) is a novel approach that leverages the collective streng
 
 ## Quickstart: MoA in 50 LOC
 
-To get to get started with using MoA in your own apps, see `moa.py`. You'll need to:
+To get to get started with using MoA in your own apps, see `moa.py`. In this simple example, we'll use 2 layers and 4 LLMs. You'll need to:
 
 1. Install the Together Python library: `pip install together`
 2. Get your [Together API Key](https://api.together.xyz/settings/api-keys) & export it: `export TOGETHER_API_KEY=`
 3. Run the python file: `python moa.py`
 
-```py
-# Mixture-of-Agents in 50 lines of code – see moa.py
-import asyncio
-import os
-from together import AsyncTogether, Together
+<img alt="MoA explained" src="./assets/moa-explained.png">
 
-client = Together(api_key=os.environ.get("TOGETHER_API_KEY"))
-async_client = AsyncTogether(api_key=os.environ.get("TOGETHER_API_KEY"))
-reference_models = [
-    "Qwen/Qwen2-72B-Instruct",
-    "Qwen/Qwen1.5-72B-Chat",
-    "mistralai/Mixtral-8x22B-Instruct-v0.1",
-    "databricks/dbrx-instruct",
-]
-aggregator_model = "mistralai/Mixtral-8x22B-Instruct-v0.1"
-aggreagator_system_prompt = "...synthesize these responses into a single, high-quality response... Responses from models:"
+## Multi-layer MoA Example
 
-async def run_llm(model):
-    response = await async_client.chat.completions.create(
-        model=model,
-        messages=[{"role": "user", "content": "What are some fun things to do in SF?"}],
-        temperature=0.7,
-        max_tokens=100,
-    )
-    return response.choices[0].message.content
+In the previous example, we went over how to implement MoA with 2 layers (4 LLMs answering and one LLM aggregating). However, one strength of MoA is being able to go through several layers to get an even better response. In this example, we'll go through how to run MoA with 3+ layers in `advanced-moa.py`.
 
-async def main():
-    results = await asyncio.gather(*[run_llm(model) for model in reference_models])
-
-    finalStream = client.chat.completions.create(
-        model=aggregator_model,
-        messages=[
-            {"role": "system", "content": aggreagator_system_prompt},
-            {"role": "user", "content": ",".join(str(element) for element in results)},
-        ],
-        stream=True,
-    )
-
-    for chunk in finalStream:
-        print(chunk.choices[0].delta.content or "", end="", flush=True)
-
-asyncio.run(main())
+```python
+python advanced-moa.py
 ```
+
+<img alt="MoA – 3 layer example" src="./assets/moa-3layer.png">
 
 ## Interactive CLI Demo
 
 This interactive CLI demo showcases a simple multi-turn chatbot where the final response is aggregated from various reference models.
 
-### Setup
+To run the interactive demo, follow these 3 steps:
 
-1. Export Your API Key:
-
-   Ensure you have your [Together API key](https://api.together.xyz/settings/api-keys) and export it as an environment variable:
-
-   ```bash
-   export TOGETHER_API_KEY={your_key}
-   ```
-
-2. Install Requirements:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-### Running the Demo
-
-To run the interactive demo, execute the following script with Python:
-
-```bash
-python bot.py
-```
+1. Export Your API Key: `export TOGETHER_API_KEY={your_key}`
+2. Install Requirements: `pip install -r requirements.txt`
+3. Run the script: `python bot.py`
 
 The CLI will prompt you to input instructions interactively:
 
@@ -112,9 +61,9 @@ The CLI will prompt you to input instructions interactively:
 3. It will generate a response based on the aggregated outputs from these models.
 4. You can continue the conversation by inputting more instructions, with the system maintaining the context of the multi-turn interaction.
 
-### Configuration
+### [Optional] Additional Configuration
 
-You can configure the demo by specifying the following parameters:
+The demo will ask you to specify certain options but if you want to do additional configuration, you can specify these parameters:
 
 - `--aggregator`: The primary model used for final response generation.
 - `--reference_models`: List of models used as references.
