@@ -62,6 +62,12 @@ def process_fn(
     """
 
     references = item.get("references", [])
+    # check if references is a string
+    if isinstance(references, str):
+        references = [references]
+    # filter out empty strings
+    references = [ref for ref in references if ref]
+
     model = item["model"]
     messages = item["instruction"]
 
