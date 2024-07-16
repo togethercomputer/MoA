@@ -1,0 +1,8 @@
+{
+    "python.analysis.packageIndexDepths": [
+        {
+            "name": "",
+            "depth": 10
+        }
+    ]
+}
