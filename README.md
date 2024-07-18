@@ -73,6 +73,31 @@ The demo will ask you to specify certain options but if you want to do additiona
 - `--num_proc`: Number of processes to run in parallel for faster execution.
 - `--multi_turn`: Boolean to toggle multi-turn interaction capability.
 
+## OpenAI Compatible API Endpoint
+
+We provide an OpenAI-compatible API endpoint that allows you to interact with the Mixture-of-Agents (MoA) system using a familiar API format. This makes it easy to integrate MoA into existing applications that use OpenAI-style APIs.
+
+To start the API server, use the `api.py` script. It supports the same parameters as `bot.py`, with an additional `--port` parameter to specify the port number for the server.
+
+### Usage
+
+To run the API server, use the following command:
+
+```bash
+python api.py --model <model_name> --reference-models <model1> --reference-models <model2> ... --temperature <temp> --max-tokens <max_tokens> --rounds <rounds> --port <port_number>
+```
+
+For example:
+
+```bash
+python api.py --model "Qwen/Qwen2-72B-Instruct" --reference-models "Qwen/Qwen2-72B-Instruct" "Qwen/Qwen1.5-72B-Chat" "mistralai/Mixtral-8x22B-Instruct-v0.1" "databricks/dbrx-instruct" --temperature 0.7 --max-tokens 512 --rounds 1 --port 5001
+```
+
+This will start an OpenAI-compatible API server on `http://localhost:5001`. You can then use this endpoint in your applications, just as you would use the OpenAI API.
+
+Note: This is a work-in-progress. It does not include all features of the official OpenAI API, and it doesn't stream responses as they come in. Might be unstable.
+
+
 ## Evaluation
 
 We provide scripts to quickly reproduce some of the results presented in our paper
