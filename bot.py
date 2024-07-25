@@ -118,7 +118,7 @@ def main(
 
     model = Prompt.ask(
         "\n1. What main model do you want to use?",
-        default="Qwen/Qwen2-72B-Instruct",
+        default=model,
     )
     console.print(f"Selected {model}.", style="yellow italic")
     temperature = float(
@@ -199,8 +199,9 @@ def main(
 
         for chunk in output:
             out = chunk.choices[0].delta.content
-            console.print(out, end="")
-            all_output += out
+            if out is not None:
+                console.print(out, end="")
+                all_output += out
         print()
 
         if DEBUG:
