@@ -83,7 +83,7 @@ def process_fn(
 
 
 def main(
-    model: str = "Qwen/Qwen2-72B-Instruct",
+    aggregator: str = "Qwen/Qwen2-72B-Instruct",
     reference_models: list[str] = default_reference_models,
     temperature: float = 0.7,
     max_tokens: int = 512,
@@ -118,7 +118,7 @@ def main(
 
     model = Prompt.ask(
         "\n1. What main model do you want to use?",
-        default="Qwen/Qwen2-72B-Instruct",
+        default=aggregator,
     )
     console.print(f"Selected {model}.", style="yellow italic")
     temperature = float(
@@ -199,8 +199,9 @@ def main(
 
         for chunk in output:
             out = chunk.choices[0].delta.content
-            console.print(out, end="")
-            all_output += out
+            if out is not None:
+                console.print(out, end="")
+                all_output += out
         print()
 
         if DEBUG:
