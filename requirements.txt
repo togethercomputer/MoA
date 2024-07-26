@@ -4,4 +4,3 @@ loguru
 datasets
 typer
 rich
-cffi
