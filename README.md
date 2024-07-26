@@ -116,7 +116,7 @@ The CLI will prompt you to input instructions interactively:
 
 You can configure the demo by specifying the following parameters:
 
-- `--model`: The primary model used for final response generation.
+- `--aggregator`: The primary model used for final response generation.
 - `--reference-models`: Models used as references.
 - `--temperature`: Controls the randomness of the response generation.
 - `--max-tokens`: Maximum number of tokens in the response.
