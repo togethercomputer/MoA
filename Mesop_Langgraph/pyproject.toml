@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "mesop-langgraph"
+version = "0.1.0"
+description = "MoA Chatbot"
+authors = ["sad-zero <zeroro.yun@gmail.com>"]
+readme = "README.md"
+packages = [{include = "mesop_langgraph", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "~3.11"
+langgraph = "^0.1.8"
+langchain = "^0.2.7"
+mesop = "^0.9.4"
+ruff = "^0.5.1"
+langchain-community = "^0.2.7"
+httpx = "^0.27.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
