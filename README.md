@@ -66,12 +66,48 @@ The CLI will prompt you to input instructions interactively:
 The demo will ask you to specify certain options but if you want to do additional configuration, you can specify these parameters:
 
 - `--aggregator`: The primary model used for final response generation.
-- `--reference_models`: List of models used as references.
+- `--reference-models`: Models used as references.
 - `--temperature`: Controls the randomness of the response generation.
-- `--max_tokens`: Maximum number of tokens in the response.
+- `--max-tokens`: Maximum number of tokens in the response.
 - `--rounds`: Number of rounds to process the input for refinement. (num rounds == num of MoA layers - 1)
-- `--num_proc`: Number of processes to run in parallel for faster execution.
-- `--multi_turn`: Boolean to toggle multi-turn interaction capability.
+- `--num-proc`: Number of processes to run in parallel for faster execution.
+- `--multi-turn`: Boolean to toggle multi-turn interaction capability.
+
+Specify `--reference-models` multiple times to use multiple models as references. For example:
+
+```bash
+# Specify multiple reference models
+python bot.py --reference-models "mistralai/Mixtral-8x22B-Instruct-v0.1" --reference-models "Qwen/Qwen2-72B-Instruct"
+```
+
+## Other OpenAI Compatible API endpoints
+
+To use different OpenAI-compatible API endpoints, set the OPENAI_BASE_URL and OPENAI_API_KEY variable.
+
+```
+export TOGETHER_API_KEY=
+export OPENAI_BASE_URL="https://your-api-provider.com/v1"
+export OPENAI_API_KEY="your-api-key-here"
+```
+
+This way, any 3rd party API can be used, such as OpenRouter, Groq, local models, etc.
+
+### Ollama
+
+For example, to run the bot using Ollama:
+
+1. Set up the environment:
+
+```
+export OPENAI_BASE_URL=http://localhost:11434/v1
+export OPENAI_API_KEY=ollama
+```
+
+2. Run the bot command:
+
+```
+python bot.py --model llama3 --reference-models llama3 --reference-models mistral
+```
 
 ## Evaluation
 
