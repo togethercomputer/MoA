@@ -138,6 +138,18 @@ def inject_references_to_messages(
     messages,
     references,
 ):
+    """Add the previous layer's responses to `messages` for aggregation.
+
+    `references` must be a list with one full response string per model of the
+    previous MoA layer (passing a bare string would enumerate its characters).
+    The responses are appended to the Aggregate-and-Synthesize prompt (Table 1
+    of arXiv:2406.04692) and placed in the SYSTEM message, while the original
+    user prompt stays in the user turn, mirroring the paper's formulation
+    where each layer receives all previous responses plus the original prompt
+    (Section 2.2). This system prompt placement is what produced the paper's
+    reported results (see the eval scripts); `moa.py` and `advanced-moa.py`
+    follow the same convention.
+    """
 
     messages = copy.deepcopy(messages)
 
