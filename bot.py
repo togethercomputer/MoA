@@ -110,7 +110,7 @@ def main(
 
     data = {
         "instruction": [[] for _ in range(len(reference_models))],
-        "references": [""] * len(reference_models),
+        "references": [[] for _ in range(len(reference_models))],
         "model": [m for m in reference_models],
     }
 
@@ -155,12 +155,12 @@ def main(
         if multi_turn:
             for i in range(len(reference_models)):
                 data["instruction"][i].append({"role": "user", "content": instruction})
-                data["references"] = [""] * len(reference_models)
+                data["references"] = [[] for _ in range(len(reference_models))]
         else:
             data = {
                 "instruction": [[{"role": "user", "content": instruction}]]
                 * len(reference_models),
-                "references": [""] * len(reference_models),
+                "references": [[] for _ in range(len(reference_models))],
                 "model": [m for m in reference_models],
             }
 
@@ -177,8 +177,25 @@ def main(
                     batched=False,
                     num_proc=num_proc,
                 )
-                references = [item["output"] for item in eval_set]
-                data["references"] = references
+                outputs = [item["output"] for item in eval_set]
+                # `generate_together` returns None when a model errors out, and
+                # the eval scripts skip those rather than pass them on. Do the
+                # same, but say so, because a dropped model changes the answer.
+                references = [output for output in outputs if output is not None]
+                if len(references) < len(outputs):
+                    console.print(
+                        f"[yellow]{len(outputs) - len(references)} of "
+                        f"{len(outputs)} models failed in round {i_round + 1} "
+                        "and were left out of the references.[/yellow]"
+                    )
+                # Each model in the next round must see ALL responses from this
+                # round, so give every row its own full copy. A flat list here
+                # would be split row-wise by `Dataset.from_dict`, leaving each
+                # model a single string whose characters get enumerated as
+                # "references" by `inject_references_to_messages` (issue #30).
+                data["references"] = [
+                    list(references) for _ in range(len(reference_models))
+                ]
                 eval_set = datasets.Dataset.from_dict(data)
 
         console.print(
